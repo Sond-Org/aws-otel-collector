@@ -1,37 +1,37 @@
 extensions:
   health_check:
+  pprof:
+    endpoint: 0.0.0.0:1777
+  zpages:
+    endpoint: 0.0.0.0:55679
 
 receivers:
   otlp:
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
-      http:
-        endpoint: 0.0.0.0:4318
-  awsxray:
-    endpoint: 0.0.0.0:2000
-    transport: udp
 
 processors:
-  batch/traces:
-    timeout: 1s
-    send_batch_size: 50
-  batch/metrics:
-    timeout: 60s
+  batch:
 
 exporters:
+  logging:
+    loglevel: debug
   awsxray:
+    region: 'us-east-2'
   awsemf:
+    region: 'us-east-2'
 
 service:
   pipelines:
     traces:
-      receivers: [otlp,awsxray]
-      processors: [batch/traces]
+      receivers: [otlp]
       exporters: [awsxray]
     metrics:
       receivers: [otlp]
-      processors: [batch/metrics]
       exporters: [awsemf]
 
-  extensions: [health_check]
+  extensions: [pprof,health_check,zpages]
+  telemetry:
+    logs:
+      level: debug

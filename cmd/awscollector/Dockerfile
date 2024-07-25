@@ -1,7 +1,7 @@
 # The build mode (options: build, copy) passed in as a --build-arg. If build is specified, then the copy
 # stage will be skipped and vice versa. The build mode builds the binary from the source files, while
 # the copy mode copies in a pre-built binary.
-ARG BUILDMODE=build
+ARG BUILDMODE=copy
 
 ################################
 #	       Base Stage          #
@@ -29,7 +29,7 @@ RUN apk --update add ca-certificates
 #	       Build Stage         #
 #			                   #
 ################################
-FROM golang:1.20 AS prep-build
+FROM golang:1.22 AS prep-build
 
 ARG TARGETARCH
 
@@ -48,9 +48,11 @@ COPY . .
 
 # build
 RUN make ${TARGETARCH}-build
+RUN make ${TARGETARCH}-build-healthcheck
 
 # move
 RUN mv /workspace/build/linux/$TARGETARCH/aoc /workspace/awscollector
+RUN mv /workspace/build/linux/$TARGETARCH/healthcheck /workspace/healthcheck
 
 ################################
 #	Copy Stage             #
