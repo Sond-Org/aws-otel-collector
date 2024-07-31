@@ -1,7 +1,7 @@
 # The build mode (options: build, copy) passed in as a --build-arg. If build is specified, then the copy
 # stage will be skipped and vice versa. The build mode builds the binary from the source files, while
 # the copy mode copies in a pre-built binary.
-ARG BUILDMODE=copy
+ARG BUILDMODE=build
 
 ################################
 #	       Base Stage          #
